@@ -1,0 +1,124 @@
+import OSPRNG.UniformDiscreteRNG;
+
+import java.util.Scanner;
+
+public class Main {
+    private static final int pocetReplikacii = 100000;
+    private static final int pocetKrokov = 1000;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Vyber si v koľko rozmernom priestore sa námorník pohybuje (1, 2, 3): ");
+
+        switch (scanner.nextInt()) {
+            case 1:
+                jednorozmerny();
+                break;
+            case 2:
+                dvojrozmerny();
+                break;
+            case 3:
+                trojrozmerny();
+                break;
+        }
+    }
+
+    private static void jednorozmerny() {
+        UniformDiscreteRNG pohybGen = new UniformDiscreteRNG(0,1); //0-dopredu, 1-dozadu
+
+        double celkovaVzdialenostOdZaciatku = 0;
+
+        for (int i = 0; i < pocetReplikacii; i++) {
+            int aktualnyBodX = 0;
+
+            for (int j = 0; j < pocetKrokov; j++) {
+                switch (pohybGen.sample()) {
+                    case 0:
+                        aktualnyBodX++;
+                        break;
+                    case 1:
+                        aktualnyBodX--;
+                        break;
+                }
+            }
+
+            celkovaVzdialenostOdZaciatku += Math.abs(aktualnyBodX);
+        }
+
+        System.out.println("Priemerná vzdialenosť od začiatku: " + celkovaVzdialenostOdZaciatku / pocetReplikacii);
+        System.out.println("Teoretický odhad: " + Math.sqrt((2.0 * pocetKrokov) / Math.PI));
+    }
+
+    private static void dvojrozmerny() {
+        UniformDiscreteRNG pohybGen = new UniformDiscreteRNG(0, 3); //0-dopredu, 1-dozadu, 2-hore, 3-dole
+
+        double celkovaVzdialenostOdZaciatku = 0;
+
+        for (int i = 0; i < pocetReplikacii; i++) {
+            int aktualnyBodX = 0;
+            int aktualnyBodY = 0;
+
+            for (int j = 0; j < pocetKrokov; j++) {
+                switch (pohybGen.sample()) {
+                    case 0:
+                        aktualnyBodX++;
+                        break;
+                    case 1:
+                        aktualnyBodX--;
+                        break;
+                    case 2:
+                        aktualnyBodY++;
+                        break;
+                    case 3:
+                        aktualnyBodY--;
+                        break;
+                }
+            }
+
+            celkovaVzdialenostOdZaciatku += Math.abs(aktualnyBodX) + Math.abs(aktualnyBodY);
+        }
+
+        System.out.println("Priemerná vzdialenosť od začiatku: " + celkovaVzdialenostOdZaciatku / pocetReplikacii);
+        System.out.println("Teoretický odhad: " + Math.sqrt((4.0 * pocetKrokov) / Math.PI));
+    }
+
+    private static void trojrozmerny() {
+        UniformDiscreteRNG pohybGen = new UniformDiscreteRNG(0, 5); //0 -> x+; 1 -> x-; 2 -> y+; 3 -> y-; 4 -> z+; 5-> z-
+
+        double celkovaVzdialenostOdZaciatku = 0;
+
+        for (int i = 0; i < pocetReplikacii; i++) {
+            int aktualnyBodX = 0;
+            int aktualnyBodY = 0;
+            int aktualnyBodZ = 0;
+
+            for (int j = 0; j < pocetKrokov; j++) {
+                switch (pohybGen.sample()) {
+                    case 0:
+                        aktualnyBodX++;
+                        break;
+                    case 1:
+                        aktualnyBodX--;
+                        break;
+                    case 2:
+                        aktualnyBodY++;
+                        break;
+                    case 3:
+                        aktualnyBodY--;
+                        break;
+                    case 4:
+                        aktualnyBodZ++;
+                        break;
+                    case 5:
+                        aktualnyBodZ--;
+                        break;
+                }
+            }
+
+            celkovaVzdialenostOdZaciatku += Math.abs(aktualnyBodX) + Math.abs(aktualnyBodY) + Math.abs(aktualnyBodZ);
+        }
+
+        System.out.println("Priemerná vzdialenosť od začiatku: " + celkovaVzdialenostOdZaciatku / pocetReplikacii);
+        System.out.println("Teoretický odhad: " + Math.sqrt((6.0 * pocetKrokov) / Math.PI));
+    }
+}
