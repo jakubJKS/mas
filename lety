@@ -1,0 +1,46 @@
+import OSPRNG.TriangularRNG;
+import OSPRNG.UniformContinuousRNG;
+
+public class Main {
+    public static void main(String[] args) {
+        int pocetReplikacii = 1000000;
+
+        TriangularRNG poklesCenyGen = new TriangularRNG(1.0 / 100.0, 4.0 / 100.0, 11.0 / 100.0);
+        UniformContinuousRNG naplnenostLetuGen = new UniformContinuousRNG(5.0 / 100.0, 14.0 / 100.0);
+
+        int[] cenyLeteniek = new int[7]; //celková cena leteniek za všetky replikácie v daný deň
+        for (int i = 0; i < pocetReplikacii; i++) {
+            double cenaLetenky = 500;
+            double naplnenostLetu = 0.27;
+            boolean meniSaCena = true;
+
+            for (int den = 0; den < 7; den++) {
+                if (den != 0) {
+                    naplnenostLetu += naplnenostLetuGen.sample();
+
+                    if (meniSaCena) {
+                        if (naplnenostLetu >= 0.75) {
+                            cenaLetenky += cenaLetenky * 0.3;
+                            meniSaCena = false;
+                        } else
+                            cenaLetenky -= cenaLetenky * poklesCenyGen.sample();
+                    }
+                }
+
+                cenyLeteniek[den] += cenaLetenky;
+            }
+        }
+
+        double minCena = Double.MAX_VALUE;
+        int minDen = -1;
+        for (int i = 0; i < 7; i++) {
+            double priemernaCenaLetenky = (double) cenyLeteniek[i] / pocetReplikacii;
+            if (priemernaCenaLetenky < minCena) {
+                minCena = priemernaCenaLetenky;
+                minDen = i;
+            }
+        }
+
+        System.out.println("Letenku sa oplatí kúpiť na " + minDen + ". deň za " + minCena + " €");
+    }
+}
