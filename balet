@@ -1,0 +1,38 @@
+import OSPRNG.UniformContinuousRNG;
+import OSPRNG.TriangularRNG;
+public class Main {
+    public static void main(String[] args) {
+
+        int pocetPokusov = 1000000;
+        int pocetClenov = 25;
+
+        TriangularRNG prichodTrenerky = new TriangularRNG(5.0, 15.0, 25.0);
+
+        UniformContinuousRNG stoRNG = new UniformContinuousRNG(0.0, 100.0);
+
+        double pocetTreningovPriemer = 0;
+
+        for (int i = 0; i < pocetPokusov; i++) {
+            int pocetPripravenych = 0;
+            int pocetTreningov = 0;
+            int[] pocetTreningovClen = new int[pocetClenov];
+            while (pocetPripravenych < 16) {
+                pocetTreningov++;
+                if (prichodTrenerky.sample() > stoRNG.sample()) {
+                    continue;
+                }
+                for (int j = 0; j < pocetClenov; j++) {
+                    if (stoRNG.sample() < 80) {
+                        pocetTreningovClen[j]++;
+                        if (pocetTreningovClen[j] == 8) {
+                            pocetPripravenych++;
+                        }
+                    }
+                }
+            }
+            pocetTreningovPriemer += pocetTreningov;
+        }
+        pocetTreningovPriemer /= pocetPokusov;
+        System.out.println("Pocet treningov priemer: " + Math.ceil(pocetTreningovPriemer));
+    }
+}
