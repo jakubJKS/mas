@@ -1,0 +1,131 @@
+import OSPRNG.TriangularRNG;
+import OSPRNG.UniformContinuousRNG;
+
+import java.util.Scanner;
+
+public class Main {
+    static final int pocetReplikacii = 10000000;
+
+    public static void main(String[] args) {
+        System.out.println("Vyber si variáciu príkladu");
+        System.out.println("1 - dve veštice rovnaká odpoveď");
+        System.out.println("2 - tri veštice rovnaká odpoveď");
+        System.out.println("3 - dve veštice rovnaká odpoveď (náhodná úspešnosť)");
+        System.out.println("4 - tri veštice rovnaká odpoveď (náhodná úspešnosť)");
+
+        Scanner scanner = new Scanner(System.in);
+        switch (scanner.nextInt()) {
+            case 1:
+                dveVestice();
+                break;
+            case 2:
+                triVestice();
+                break;
+            case 3:
+                dveVesticeNahodna();
+                break;
+            case 4:
+                triVesticeNahodna();
+                break;
+        }
+    }
+
+    private static void dveVestice() {
+        UniformContinuousRNG prvaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG druhaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+
+        int pocetRovnakych = 0;
+        int pocetPravd = 0;
+        for (int i = 0; i < pocetReplikacii; i++) {
+
+            boolean prvaPravda = prvaPravdaGen.sample() < 0.8;
+            boolean druhaPravda = druhaPravdaGen.sample() < 0.8;
+
+            if (prvaPravda == druhaPravda) {
+
+                pocetRovnakych++;
+                if (prvaPravda)
+                    pocetPravd++;
+            }
+        }
+
+        System.out.println(((double) pocetPravd / pocetRovnakych) * 100.0);
+    }
+
+    private static void triVestice() {
+        UniformContinuousRNG prvaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG druhaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG tretiaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+
+        int pocetRovnakych = 0;
+        int pocetPravd = 0;
+        for (int i = 0; i < pocetReplikacii; i++) {
+
+            boolean prvaPravda = prvaPravdaGen.sample() < 0.8;
+            boolean druhaPravda = druhaPravdaGen.sample() < 0.8;
+            boolean tretiaPravda = tretiaPravdaGen.sample() < 0.8;
+
+            if (prvaPravda == druhaPravda && druhaPravda == tretiaPravda) {
+
+                pocetRovnakych++;
+                if (prvaPravda)
+                    pocetPravd++;
+            }
+        }
+
+        System.out.println(((double) pocetPravd / pocetRovnakych) * 100.0);
+    }
+
+    private static void dveVesticeNahodna() {
+        UniformContinuousRNG prvaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG druhaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+
+        TriangularRNG prvaUspesnostGen = new TriangularRNG(30.0, 80.0, 100.0);
+        TriangularRNG druhaUspesnostGen = new TriangularRNG(30.0, 80.0, 100.0);
+
+        int pocetRovnakych = 0;
+        int pocetPravd = 0;
+        for (int i = 0; i < pocetReplikacii; i++) {
+
+            boolean prvaPravda = prvaPravdaGen.sample() < prvaUspesnostGen.sample() / 100.0;
+            boolean druhaPravda = druhaPravdaGen.sample() < druhaUspesnostGen.sample() / 100.0;
+
+            if (prvaPravda == druhaPravda) {
+
+                pocetRovnakych++;
+                if (prvaPravda)
+                    pocetPravd++;
+            }
+        }
+
+        System.out.println(((double) pocetPravd / pocetRovnakych) * 100.0);
+    }
+
+    private static void triVesticeNahodna() {
+        UniformContinuousRNG prvaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG druhaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG tretiaPravdaGen = new UniformContinuousRNG(0.0, 1.0);
+
+        TriangularRNG prvaUspesnostGen = new TriangularRNG(30.0, 80.0, 100.0);
+        TriangularRNG druhaUspesnostGen = new TriangularRNG(30.0, 80.0, 100.0);
+        TriangularRNG tretiaUspesnostGen = new TriangularRNG(30.0, 80.0, 100.0);
+
+        int pocetRovnakych = 0;
+        int pocetPravd = 0;
+        for (int i = 0; i < pocetReplikacii; i++) {
+
+            boolean prvaPravda = prvaPravdaGen.sample() < prvaUspesnostGen.sample() / 100.0;
+            boolean druhaPravda = druhaPravdaGen.sample() < tretiaUspesnostGen.sample() / 100.0;
+            boolean tretiaPravda = tretiaPravdaGen.sample() < druhaUspesnostGen.sample() / 100.0;
+
+            if (prvaPravda == druhaPravda && druhaPravda == tretiaPravda) {
+
+                pocetRovnakych++;
+                if (prvaPravda)
+                    pocetPravd++;
+            }
+        }
+
+        System.out.println(((double) pocetPravd / pocetRovnakych) * 100.0);
+    }
+}
