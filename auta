@@ -1,0 +1,106 @@
+import OSPRNG.TriangularRNG;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+
+public class Main {
+    public static void main(String[] args) {
+        final int pocetReplikacii = 1000000;
+        final int pocetPretekov = 15;
+        final int pocetAut = 5;
+
+        // Generátory pre časy automobilov
+        TriangularRNG casFastGen = new TriangularRNG(40.0, 50.0, 75.0);
+        TriangularRNG casFuriousGen = new TriangularRNG(35.0, 52.0, 80.0);
+
+        // Pravdepodobnosť, že Fast obsadí prvé dve miesta
+        int pocetPrveDveFast = 0;
+
+        for (int i = 0; i < pocetReplikacii; i++) {
+            ArrayList<double[]> vysledky = new ArrayList<>(); // [čas, 1 (Fast) alebo 0 (Furious)]
+
+            // Generovanie časov
+            for (int j = 0; j < pocetAut; j++) {
+                vysledky.add(new double[]{casFastGen.sample(), 1}); // 1 pre Fast
+                vysledky.add(new double[]{casFuriousGen.sample(), 0}); // 0 pre Furious
+            }
+
+            // Zoradenie podľa času
+            vysledky.sort(Comparator.comparingDouble(a -> a[0]));
+
+            // Kontrola prvých dvoch miest
+            if (vysledky.get(0)[1] == 1 && vysledky.get(1)[1] == 1) {
+                pocetPrveDveFast++;
+            }
+        }
+
+        System.out.printf("Pravdepodobnosť, že na prvých 2 miestach bude Fast: %.2f%%%n",
+                ((double) pocetPrveDveFast / pocetReplikacii) * 100);
+
+        // Pravdepodobnosť, že Fast získa viac bodov za sezónu
+        int viacBodovFast = 0;
+
+        for (int i = 0; i < pocetReplikacii; i++) {
+            int bodyFast = 0;
+            int bodyFurious = 0;
+
+            for (int j = 0; j < pocetPretekov; j++) {
+                ArrayList<double[]> vysledky = new ArrayList<>();
+
+                // Generovanie časov
+                for (int k = 0; k < pocetAut; k++) {
+                    vysledky.add(new double[]{casFastGen.sample(), 1});
+                    vysledky.add(new double[]{casFuriousGen.sample(), 0});
+                }
+
+                // Zoradenie podľa času
+                vysledky.sort(Comparator.comparingDouble(a -> a[0]));
+
+                // Pridelenie bodov
+                for (int k = 0; k < vysledky.size(); k++) {
+                    if (vysledky.get(k)[1] == 1) { // Fast
+                        bodyFast += bodyZaPoziciu(k + 1);
+                    } else { // Furious
+                        bodyFurious += bodyZaPoziciu(k + 1);
+                    }
+                }
+            }
+
+            // Porovnanie bodov za sezónu
+            if (bodyFast > bodyFurious) {
+                viacBodovFast++;
+            }
+        }
+
+        System.out.printf("Pravdepodobnosť, že Fast získa viac bodov za sezónu: %.2f%%%n",
+                ((double) viacBodovFast / pocetReplikacii) * 100);
+    }
+
+    // Funkcia na bodové hodnotenie
+    private static int bodyZaPoziciu(int pozicia) {
+        switch (pozicia) {
+            case 1:
+                return 10;
+            case 2:
+                return 9;
+            case 3:
+                return 8;
+            case 4:
+                return 7;
+            case 5:
+                return 6;
+            case 6:
+                return 5;
+            case 7:
+                return 4;
+            case 8:
+                return 3;
+            case 9:
+                return 2;
+            case 10:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+}
