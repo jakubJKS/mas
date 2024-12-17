@@ -1,0 +1,37 @@
+import OSPRNG.TriangularRNG;
+import OSPRNG.UniformDiscreteRNG;
+
+public class Main {
+    public static void main(String[] args) {
+        int pocetPokusov = 1000000;
+        int pocetA = 70, pocetB = 90;
+        double cenaA = 3, cenaB = 2;
+
+        TriangularRNG nakladyAGen = new TriangularRNG(1.0, 1.75, 2.5);
+        TriangularRNG nakladyBGen = new TriangularRNG(0.7, 1.2, 1.7);
+        UniformDiscreteRNG dopytAGen = new UniformDiscreteRNG(40, 80);
+        UniformDiscreteRNG dopytBGen = new UniformDiscreteRNG(66, 155);
+
+        double celkovyZiskA = 0.0;
+        double celkovyZiskB = 0.0;
+
+        for (int i = 0; i < pocetPokusov; i++) {
+            int predaneA = Math.min(dopytAGen.sample(), pocetA);
+            double celkoveNakladyA = 0.0;
+            for (int j = 0; j < pocetA; j++)
+                celkoveNakladyA += nakladyAGen.sample();
+
+            celkovyZiskA += cenaA * predaneA - celkoveNakladyA;
+
+            int predaneB = Math.min(dopytBGen.sample(), pocetB);
+            double celkoveNakladyB = 0.0;
+            for (int j = 0; j < pocetB; j++)
+                celkoveNakladyB += nakladyBGen.sample();
+
+            celkovyZiskB += cenaB * predaneB - celkoveNakladyB;
+        }
+
+        System.out.println("Priemerný zisk z predaja výrobku A: " + celkovyZiskA / pocetPokusov);
+        System.out.println("Priemerný zisk z predaja výrobku B: " + celkovyZiskB / pocetPokusov);
+    }
+}
