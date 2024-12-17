@@ -1,0 +1,36 @@
+import OSPRNG.UniformContinuousRNG;
+import OSPRNG.TriangularRNG;
+
+public class FazuleSimulator {
+
+    public static void main(String[] args) {
+        int pocetPokusov = 1000000;
+
+        // Inicializácia RNG objektov
+        TriangularRNG nakupene = new TriangularRNG(5.0, 10.0, 40.0);
+        UniformContinuousRNG priaznivePocasie = new UniformContinuousRNG(40.0, 70.0);
+        UniformContinuousRNG stoRNG = new UniformContinuousRNG(0.0, 100.0);
+
+        double oplatiSa = 0;
+
+        for (int i = 0; i < pocetPokusov; i++) {
+            double vysledok = 0;
+            double nakupeneSample = nakupene.sample();
+
+            vysledok -= nakupeneSample * 4;
+
+            if (priaznivePocasie.sample() > stoRNG.sample()) {
+                vysledok += nakupeneSample * 120 * 4.2;
+            } else {
+                vysledok += nakupeneSample * 90 * 4.2;
+            }
+
+            if (vysledok > 8000) {
+                oplatiSa++;
+            }
+        }
+
+        oplatiSa /= pocetPokusov;
+        System.out.println("Oplati Sa: " + oplatiSa * 100 + "%");
+    }
+}
