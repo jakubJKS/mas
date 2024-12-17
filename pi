@@ -1,0 +1,33 @@
+import OSPRNG.UniformContinuousRNG;
+
+public class Main {
+    public static void main(String[] args) {
+        UniformContinuousRNG xGen = new UniformContinuousRNG(0.0, 1.0);
+        UniformContinuousRNG yGen = new UniformContinuousRNG(0.0, 1.0);
+
+        final double obsahStvorca = 1;
+
+        double aktualnePI = 0;
+        int pocetVsetkyBodov = 0;
+        int pocetBodovVKruhu = 0;
+
+        while (Math.abs(aktualnePI - Math.PI) >= 10e-6) {
+            pocetVsetkyBodov++;
+
+            double x = xGen.sample();
+            double y = yGen.sample();
+
+            if (patriBodDoKruhu(x, y))
+                pocetBodovVKruhu++;
+
+            aktualnePI = (obsahStvorca * ((double) pocetBodovVKruhu / pocetVsetkyBodov)) / (0.5 * 0.5);
+        }
+
+        System.out.println("Počet bodov na dosiahnutie potrebnej presnosti: " + pocetVsetkyBodov);
+        System.out.println("Aproximované PI: " + aktualnePI);
+    }
+
+    private static boolean patriBodDoKruhu(double x, double y) {
+        return Math.pow(x - 0.5, 2) + Math.pow(y - 0.5, 2) <= Math.pow(0.5, 2);
+    }
+}
